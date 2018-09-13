@@ -145,7 +145,11 @@
               DISPLAYS THE NUMBER OF REMAINING CHARACTERS NEXT TO THE FULL WORD.
               DONT FORGET TO REMOVE LEADING AND TRAILING WHITESPACES AS WELL
         */
-        chicagoStartups.forEach((startup) => console.log(startup.replace(/[^\w\s]/gi, '').trim()));
+        let startups = chicagoStartups.map((startup) => { 
+            return startup + ": " + startup.replace(/[^\w\s]/gi, '').trim().length;
+        });
+
+        rerenderStartups(startups);
     }
     
     function initReverse() {
@@ -178,6 +182,21 @@
         */
     }
     
+    function rerenderStartups(startups) {
+        let rootDiv = document.getElementById("rootContainer");
+        // remove current startup list
+        let currentList = rootDiv.removeChild(rootDiv.firstChild);
+        // recreate list with new startups
+        var companyNamesContainer = document.createElement('div');
+        startups.forEach( function(chicagoStartup, index) {
+            var childDiv = document.createElement('div');
+            var text = document.createTextNode(index.toString().concat(' .) ').concat(chicagoStartup));
+            childDiv.appendChild(text);
+            companyNamesContainer.appendChild(childDiv);
+        });
+        rootDiv.insertBefore(companyNamesContainer, rootDiv.firstChild);
+        
+    }
     function run() {
         initDocument();
         initReverse();
