@@ -44,6 +44,10 @@
     .gold {
         background-image: gold;
     }
+
+    .display-inline-block > div {
+        display:inline-block;
+    }
 </style>
 
 <script>
@@ -80,15 +84,21 @@
         clearDocument();
         var rootDiv = document.createElement('div');
         rootDiv.id = 'rootContainer';
+        var controlPanel = document.createElement('div');
+        controlPanel.id = 'controlPanel';
         var companyNamesContainer = document.createElement('div');
+        companyNamesContainer.id = 'companyNamesContainer';
         chicagoStartups.forEach( function(chicagoStartup, index) {
             var childDiv = document.createElement('div');
             var text = document.createTextNode(index.toString().concat(' .) ').concat(chicagoStartup));
             childDiv.appendChild(text);
             companyNamesContainer.appendChild(childDiv);
         });
+        rootDiv.appendChild(controlPanel);
         rootDiv.appendChild(companyNamesContainer);
         document.body.appendChild(rootDiv);
+        addToggleButton();
+        
     }
 
     function renderReversedElements() {
@@ -180,14 +190,26 @@
 
             3.  
         */
+        let companyNamesContainer = document.getElementById("companyNamesContainer");
+        let isHorizontal = companyNamesContainer.classList.contains("display-inline-block");
+        if (isHorizontal) {
+            companyNamesContainer.classList.remove("display-inline-block");
+        }
+        else {
+            companyNamesContainer.classList.add("display-inline-block");
+        }
+
     }
     
-    function rerenderStartups(startups) {
-        let rootDiv = document.getElementById("rootContainer");
+    function rerenderStartups(startups, displayHorizontal) {
+        let rootDiv = document.getElementById('rootContainer');
+        let companyNamesContainer = document.getElementById("companyNamesContainer");
+        let isHorizontal = companyNamesContainer.classList.contains("display-inline-block");
         // remove current startup list
-        let currentList = rootDiv.removeChild(rootDiv.firstChild);
+        companyNamesContainer.parentNode.removeChild(companyNamesContainer);
         // recreate list with new startups
-        var companyNamesContainer = document.createElement('div');
+        companyNamesContainer = document.createElement('div');
+        companyNamesContainer.id = 'companyNamesContainer';
         startups.forEach( function(chicagoStartup, index) {
             var childDiv = document.createElement('div');
             var text = document.createTextNode(index.toString().concat(' .) ').concat(chicagoStartup));
@@ -195,8 +217,19 @@
             companyNamesContainer.appendChild(childDiv);
         });
         rootDiv.insertBefore(companyNamesContainer, rootDiv.firstChild);
-        
+        if (isHorizontal) {
+           toggleDisplay();
+        }
     }
+
+    function addToggleButton() {
+        var toggleButton = document.createElement('button');
+        var btnText = document.createTextNode('Toggle Display');
+        toggleButton.onclick = toggleDisplay;
+        toggleButton.appendChild(btnText);
+        document.getElementById('controlPanel').appendChild(toggleButton);
+    }
+
     function run() {
         initDocument();
         initReverse();
