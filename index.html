@@ -1,7 +1,8 @@
 <!DOCTYPE html>
+<!--Brandon Gomez Github: https://github.com/ToucanBran/javascript101-->
 <html>
     <h3>Javascript Basics</h3>
-    <button onclick="cleanAndCountCharacters()">
+    <button id="cleanAndCount" onclick="cleanAndCountCharacters()">
         clean and count words
     </button>
     <body>
@@ -11,7 +12,14 @@
 <style>
     #rootContainer {
         display: flex;
+        flex-direction: column;
+    }
+    #startupsRootContainer {
+        display:flex;
+    }
 
+    #controlPanel {
+        display: flex;
     }
     .root-container {
         position: relative;
@@ -82,12 +90,10 @@
 
     function initDocument() {
         clearDocument();
-        var rootDiv = document.createElement('div');
-        rootDiv.id = 'rootContainer';
-        var controlPanel = document.createElement('div');
-        controlPanel.id = 'controlPanel';
-        var companyNamesContainer = document.createElement('div');
-        companyNamesContainer.id = 'companyNamesContainer';
+        var rootDiv = createDivWithId('rootContainer');
+        var controlPanel = createDivWithId('controlPanel');
+        var startupsRootContainer = createDivWithId('startupsRootContainer');        
+        var companyNamesContainer = createDivWithId('companyNamesContainer');
         chicagoStartups.forEach( function(chicagoStartup, index) {
             var childDiv = document.createElement('div');
             var text = document.createTextNode(index.toString().concat(' .) ').concat(chicagoStartup));
@@ -95,9 +101,11 @@
             companyNamesContainer.appendChild(childDiv);
         });
         rootDiv.appendChild(controlPanel);
-        rootDiv.appendChild(companyNamesContainer);
+        rootDiv.appendChild(startupsRootContainer);
+        startupsRootContainer.appendChild(companyNamesContainer);
         document.body.appendChild(rootDiv);
-        addToggleButton();
+        setupControlPanel();
+        setupStyles();
         
     }
 
@@ -171,8 +179,8 @@
         reverseBtn.appendChild(btnText);
         var reverseButtonContainer = document.createElement('div');
         reverseButtonContainer.appendChild(reverseBtn);    
-        document.getElementById('rootContainer').appendChild(reverseButtonContainer);
-        document.getElementById('rootContainer').appendChild(reverseContainer);
+        document.getElementById('controlPanel').appendChild(reverseButtonContainer);
+        document.getElementById('startupsRootContainer').appendChild(reverseContainer);
     }
 
     function toggleDisplay() {
@@ -204,30 +212,38 @@
     function rerenderStartups(startups, displayHorizontal) {
         let rootDiv = document.getElementById('rootContainer');
         let companyNamesContainer = document.getElementById("companyNamesContainer");
-        let isHorizontal = companyNamesContainer.classList.contains("display-inline-block");
-        // remove current startup list
-        companyNamesContainer.parentNode.removeChild(companyNamesContainer);
-        // recreate list with new startups
-        companyNamesContainer = document.createElement('div');
-        companyNamesContainer.id = 'companyNamesContainer';
+        
+        // clear out startups
+        companyNamesContainer.innerHTML = '';
+        // populate container with startups
         startups.forEach( function(chicagoStartup, index) {
             var childDiv = document.createElement('div');
             var text = document.createTextNode(index.toString().concat(' .) ').concat(chicagoStartup));
             childDiv.appendChild(text);
             companyNamesContainer.appendChild(childDiv);
         });
-        rootDiv.insertBefore(companyNamesContainer, rootDiv.firstChild);
-        if (isHorizontal) {
-           toggleDisplay();
-        }
     }
 
-    function addToggleButton() {
-        var toggleButton = document.createElement('button');
-        var btnText = document.createTextNode('Toggle Display');
+    function setupControlPanel() {
+        let controlPanel = document.getElementById('controlPanel');
+        let toggleButton = document.createElement('button');
+        let btnText = document.createTextNode('Toggle Display');
         toggleButton.onclick = toggleDisplay;
         toggleButton.appendChild(btnText);
-        document.getElementById('controlPanel').appendChild(toggleButton);
+        controlPanel.appendChild(toggleButton);
+        controlPanel.appendChild(document.getElementById('cleanAndCount'));
+    }
+
+    function createDivWithId(id) {
+        var div = document.createElement('div');
+        div.id = id;
+        return div;
+    }
+
+    function setupStyles() {
+        document.getElementById('companyNamesContainer').classList.add('startups-container');
+        document.getElementById('rootContainer').classList.add('root-container');
+        document.getElementById('controlPanel').classList.add('header');
     }
 
     function run() {
